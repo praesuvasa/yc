@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Yogurt Culture — Content Calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: { ink: '#0B0B0B', brandred: '#F2565C', brandblue: '#84D7FF', brandorange: '#FF8C33' },
+        fontFamily: { kanit: ['Kanit', 'system-ui', 'sans-serif'] },
+      },
+    },
+  };
+</script>
+<style>
+  html, body { font-family: 'Kanit', system-ui, sans-serif; }
+  body { background: #EEF3F9; color: #0B0B0B; -webkit-font-smoothing: antialiased; }
+  .glass { background: rgba(255,255,255,0.62); backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%); border: 1px solid rgba(255,255,255,0.85); box-shadow: 0 10px 40px -12px rgba(11,11,11,0.20); }
+  .glass-soft { background: rgba(255,255,255,0.48); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.75); }
+  .blob { position: fixed; border-radius: 9999px; filter: blur(70px); opacity: 0.42; z-index: 0; pointer-events: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .cap-pre { white-space: pre-wrap; word-break: break-word; }
+  @keyframes pop { 0% { transform: translateY(8px) scale(.98); opacity: 0 } 100% { transform: translateY(0) scale(1); opacity: 1 } }
+  .animate-pop { animation: pop .22s ease-out both; }
+  @keyframes toastin { 0% { transform: translate(-50%, 20px); opacity: 0 } 100% { transform: translate(-50%, 0); opacity: 1 } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; } }
+  *:focus-visible { outline: 2px solid #0B0B0B; outline-offset: 2px; border-radius: 6px; }
+  /* ---------- dark theme (toggled by html.dark) ---------- */
+  html.dark { color-scheme: dark; }
+  html.dark body { background: #13151a; color: #e9eaee; }
+  html.dark .glass { background: rgba(32,36,45,0.66); border-color: rgba(255,255,255,0.09); box-shadow: 0 14px 46px -14px rgba(0,0,0,0.65); }
+  html.dark .glass-soft { background: rgba(46,50,61,0.5); border-color: rgba(255,255,255,0.08); }
+  html.dark .blob { opacity: 0.30; }
+  html.dark .text-ink { color: #e9eaee !important; }
+  html.dark [class*="text-ink/"] { color: #a8adba !important; }
+  html.dark .bg-ink { background: #2b2f3a !important; }
+  html.dark .bg-white, html.dark [class*="bg-white/"] { background: rgba(255,255,255,0.08) !important; }
+  html.dark [class*="border-ink/"] { border-color: rgba(255,255,255,0.10) !important; }
+  html.dark .ring-ink { --tw-ring-color: #e9eaee !important; }
+  /* keep dark text on brand-coloured badges (2-class specificity beats .text-ink) */
+  html.dark .bg-brandblue.text-ink, html.dark .bg-brandorange.text-ink, html.dark .bg-brandred.text-ink { color: #0B0B0B !important; }
+  html.dark *:focus-visible { outline-color: #FF8C33; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/plain" id="appsrc">
+const { useState, useMemo, useEffect, useRef } = React;
+
+const DATA = {"summary": {"topicsReviewed": 14, "topicsPassed": 14}, "top5": [{"id": 5, "pillar": "Education", "track": "content", "title": "ทำไมโยเกิร์ตที่ดี ถึงเปรี้ยว ‘พอดี’", "topicAvg": 9.4, "captionMin": 8}, {"id": 2, "pillar": "Education", "track": "content", "title": "โพรไบโอติกส์ในโยเกิร์ต ทำอะไรจริง ๆ", "topicAvg": 9.3, "captionMin": 8}, {"id": 9, "pillar": "Education", "track": "content", "title": "Greek yogurt ต่างจากธรรมดายังไง", "topicAvg": 9.2, "captionMin": 8}, {"id": 12, "pillar": "Inspiration", "track": "content", "title": "เสาร์เช้าช้า ๆ กับโยเกิร์ตหนึ่งถ้วย", "topicAvg": 9.1, "captionMin": 8}, {"id": 6, "pillar": "Inspiration", "track": "content", "title": "วันฝนตก โยเกิร์ตราดน้ำผึ้ง", "topicAvg": 9.0, "captionMin": 8}], "posts": {"1": {"pillar": "Inspiration", "track": "content", "title": "เปิดเดือนใหม่ที่มื้อเช้าง่าย ๆ", "topicAvg": 8.8, "captionAvg": 8.6, "captionMin": 8, "angle": "IG · Feed photo · สไตล์ Inspiration — เปิดเดือนด้วย mood everyday เริ่มต้นเล็ก ๆ ให้รู้สึกว่าวันนี้เริ่มดี", "caption_th": "เดือนใหม่ ไม่ต้องเริ่มด้วยอะไรใหญ่\nแค่มื้อเช้าที่ทำให้รู้สึกว่าวันนี้เริ่มดี\n\nโยเกิร์ตหนึ่งถ้วย ผลไม้ที่มีในตู้เย็น เท่านี้ก็พอ\nความสม่ำเสมอเล็ก ๆ มักอยู่กับเรานานกว่าที่คิด\n\n#YogurtCulture #มื้อเช้าง่ายๆ #everydaytasteful", "caption_body": "เดือนใหม่ ไม่ต้องเริ่มด้วยอะไรใหญ่\nแค่มื้อเช้าที่ทำให้รู้สึกว่าวันนี้เริ่มดี\n\nโยเกิร์ตหนึ่งถ้วย ผลไม้ที่มีในตู้เย็น เท่านี้ก็พอ\nความสม่ำเสมอเล็ก ๆ มักอยู่กับเรานานกว่าที่คิด", "hashtags": ["#YogurtCulture", "#มื้อเช้าง่ายๆ", "#everydaytasteful"], "image_prompt": "", "headline_th": "", "product_hero": ""}, "2": {"pillar": "Education", "track": "content", "title": "โพรไบโอติกส์ในโยเกิร์ต ทำอะไรจริง ๆ", "topicAvg": 9.3, "captionAvg": 9.0, "captionMin": 8, "angle": "FB · บทความสั้น · สไตล์ Education — อธิบายโพรไบโอติกส์แบบ foodsci ง่าย ๆ สร้างความน่าเชื่อถือ", "caption_th": "โพรไบโอติกส์ในโยเกิร์ต จริง ๆ แล้วทำอะไร?\n\nสั้น ๆ คือจุลินทรีย์ที่มีประโยชน์ ซึ่งเกิดจากการหมักนมด้วยเชื้อ Lactobacillus และ Streptococcus\n\nระหว่างหมัก เชื้อพวกนี้จะเปลี่ยนน้ำตาลแล็กโทสในนมให้เป็นกรดแลคติก — นั่นคือที่มาของรสเปรี้ยวอ่อน ๆ และเนื้อที่ข้นขึ้น\n\nโพรไบโอติกส์ที่ยังมีชีวิตช่วยเรื่องสมดุลจุลินทรีย์ในลำไส้ ข้อสำคัญคือต้องมี live cultures จริง ๆ ไม่ผ่านความร้อนซ้ำหลังหมัก\n\nที่ Yogurt Culture เราตั้งใจรักษาเชื้อให้ยังมีชีวิตจนถึงมือคุณ\n\n#YogurtCulture", "caption_body": "โพรไบโอติกส์ในโยเกิร์ต จริง ๆ แล้วทำอะไร?\n\nสั้น ๆ คือจุลินทรีย์ที่มีประโยชน์ ซึ่งเกิดจากการหมักนมด้วยเชื้อ Lactobacillus และ Streptococcus\n\nระหว่างหมัก เชื้อพวกนี้จะเปลี่ยนน้ำตาลแล็กโทสในนมให้เป็นกรดแลคติก — นั่นคือที่มาของรสเปรี้ยวอ่อน ๆ และเนื้อที่ข้นขึ้น\n\nโพรไบโอติกส์ที่ยังมีชีวิตช่วยเรื่องสมดุลจุลินทรีย์ในลำไส้ ข้อสำคัญคือต้องมี live cultures จริง ๆ ไม่ผ่านความร้อนซ้ำหลังหมัก\n\nที่ Yogurt Culture เราตั้งใจรักษาเชื้อให้ยังมีชีวิตจนถึงมือคุณ", "hashtags": ["#YogurtCulture"], "image_prompt": "", "headline_th": "", "product_hero": ""}, "3": {"pillar": "Engagement", "track": "content", "title": "Yogurt bowl 3 นาที เช้าวันอาทิตย์", "topicAvg": 8.6, "captionAvg": 8.7, "captionMin": 8, "angle": "LINE OA · Broadcast + CTA · สไตล์ Recipe — สูตร 3 ขั้น พร้อมชวนสั่งล่วงหน้า", "caption_th": "Yogurt bowl 3 นาที สำหรับเช้าวันอาทิตย์ 🥣\n\n1. โยเกิร์ต Yogurt Culture 1 ถ้วย\n2. กล้วยหั่น + เบอร์รี่\n3. โรยกราโนล่า ราดน้ำผึ้งนิดเดียว\n\nจบ — อิ่มสบาย ไม่หนักท้อง\n\nสั่งล่วงหน้าไว้สำหรับสัปดาห์นี้ได้เลย 👉 [ลิงก์สั่งซื้อ]\n\n#YogurtCulture", "caption_body": "Yogurt bowl 3 นาที สำหรับเช้าวันอาทิตย์ 🥣\n\n1. โยเกิร์ต Yogurt Culture 1 ถ้วย\n2. กล้วยหั่น + เบอร์รี่\n3. โรยกราโนล่า ราดน้ำผึ้งนิดเดียว\n\nจบ — อิ่มสบาย ไม่หนักท้อง\n\nสั่งล่วงหน้าไว้สำหรับสัปดาห์นี้ได้เลย 👉 [ลิงก์สั่งซื้อ]", "hashtags": ["#YogurtCulture"], "image_prompt": "", "headline_th": "", "product_hero": ""}, "4": {"pillar": "Engagement", "track": "content", "title": "Overnight oats เตรียมคืนนี้ กินพรุ่งนี้", "topicAvg": 8.8, "captionAvg": 8.8, "captionMin": 8, "angle": "IG · Reels · สไตล์ Recipe — สูตรเตรียมล่วงหน้า เหมาะคนเช้ารีบ", "caption_th": "เตรียมคืนนี้ พรุ่งนี้เช้าหยิบกินได้เลย\n\nโอ๊ต + โยเกิร์ต + นม คนรวมกัน\nแช่ตู้เย็นข้ามคืน ตื่นมาโรยผลไม้\n\nเช้าที่ไม่ต้องรีบ เริ่มจากการเตรียมไว้ก่อน\n\n#YogurtCulture #overnightoats #มื้อเช้า #recipeสั้นๆ", "caption_body": "เตรียมคืนนี้ พรุ่งนี้เช้าหยิบกินได้เลย\n\nโอ๊ต + โยเกิร์ต + นม คนรวมกัน\nแช่ตู้เย็นข้ามคืน ตื่นมาโรยผลไม้\n\nเช้าที่ไม่ต้องรีบ เริ่มจากการเตรียมไว้ก่อน", "hashtags": ["#YogurtCulture", "#overnightoats", "#มื้อเช้า", "#recipeสั้นๆ"], "image_prompt": "", "headline_th": "", "product_hero": ""}, "5": {"pillar": "Education", "track": "content", "title": "ทำไมโยเกิร์ตที่ดี ถึงเปรี้ยว ‘พอดี’", "topicAvg": 9.4, "captionAvg": 9.1, "captionMin": 8, "angle": "IG · Carousel · สไตล์ Education — เล่ากลไกการหมักให้เข้าใจง่ายทีละสไลด์", "caption_th": "ทำไมโยเกิร์ตที่ดี ถึงเปรี้ยว “พอดี” ไม่จัดเกินไป?\n\nรสเปรี้ยวมาจากกรดแลคติกที่เกิดระหว่างหมัก\nหมักนานไป = เปรี้ยวจัด · สั้นไป = ยังไม่ได้เนื้อ\n\nจุดพอดีอยู่ที่การคุมอุณหภูมิและเวลาให้นิ่ง\nเปรี้ยวละมุน เนื้อเนียน กินเปล่า ๆ ก็อร่อย\n\n#YogurtCulture #foodscience #โยเกิร์ต", "caption_body": "ทำไมโยเกิร์ตที่ดี ถึงเปรี้ยว “พอดี” ไม่จัดเกินไป?\n\nรสเปรี้ยวมาจากกรดแลคติกที่เกิดระหว่างหมัก\nหมักนานไป = เปรี้ยวจัด · สั้นไป = ยังไม่ได้เนื้อ\n\nจุดพอดีอยู่ที่การคุมอุณหภูมิและเวลาให้นิ่ง\nเปรี้ยวละมุน เนื้อเนียน กินเปล่า ๆ ก็อร่อย", "hashtags": ["#YogurtCulture", "#foodscience", "#โยเกิร์ต"], "image_prompt": "", "headline_th": "", "product_hero": ""}, "6": {"pillar": "Inspiration", "track": "content", "title": "วันฝนตก โยเกิร์ตราดน้ำผึ้ง", "topicAvg": 9.0, "captionAvg": 8.9, "captionMin": 8, "angle": "FB · เล่ายาว · สไตล์ Comfort/Inspiration — มู้ดฤดูฝน มื้อเล็ก ๆ ที่ทำให้บ่ายผ่านไปสบาย", "caption_th": "ฝนตกทั้งวันแบบนี้ เราชอบกินโยเกิร์ตแบบไหนรู้ไหม\n\nไม่ใช่แบบเย็นจัดจากตู้\nแต่เป็นโยเกิร์ตที่วางไว้ให้คลายความเย็นสักพัก ราดน้ำผึ้งนิดหน่อย\nเนื้อจะนุ่มขึ้น รสกลมขึ้น\n\nอาหารที่ดีไม่จำเป็นต้องยุ่งยากเสมอไป\nบางทีแค่ของง่าย ๆ ในจังหวะที่ใช่ ก็พอแล้ว\n\n#YogurtCulture", "caption_body": "ฝนตกทั้งวันแบบนี้ เราชอบกินโยเกิร์ตแบบไหนรู้ไหม\n\nไม่ใช่แบบเย็นจัดจากตู้\nแต่เป็นโยเกิร์ตที่วางไว้ให้คลายความเย็นสักพัก ราดน้ำผึ้งนิดหน่อย\nเนื้อจะนุ่มขึ้น รสกลมขึ้น\n\nอาหารที่ดีไม่จำเป็นต้องยุ่งยากเสมอไป\nบางทีแค่ของง่าย ๆ ในจังหวะที่ใช่ ก็พอแล้ว", "hashtags": ["#YogurtCulture"], "image_prompt": "", "headline_th": "", "product_hero": ""}, "7": {"pillar": "Inspiration", "track": "content", "title": "มื้อบ่ายเบา ๆ ก่อนทำงานต่อ", "topicAvg": 8.7, "captionAvg": 8.6, "captionMin": 8, "angle": "IG · Feed photo · สไตล์ Everyday — ของว่างบ่ายที่อิ่มแต่ไม่ทำให้ง่วง", "caption_th": "มื้อบ่ายเบา ๆ ก่อนกลับไปนั่งทำงานต่อ\n\nโยเกิร์ตหนึ่งถ้วยกับถั่วอบ\nไม่ทำให้ง่วง ไม่หนักท้อง อิ่มกำลังดี\n\nช่วงบ่ายสามที่หิวแต่ไม่อยากกินหนัก เก็บไว้เป็นตัวเลือกได้\n\n#YogurtCulture #afternoonsnack #everyday", "caption_body": "มื้อบ่ายเบา ๆ ก่อนกลับไปนั่งทำงานต่อ\n\nโยเกิร์ตหนึ่งถ้วยกับถั่วอบ\nไม่ทำให้ง่วง ไม่หนักท้อง อิ่มกำลังดี\n\nช่วงบ่ายสามที่หิวแต่ไม่อยากกินหนัก เก็บไว้เป็นตัวเลือกได้", "hashtags": ["#YogurtCulture", "#afternoonsnack", "#everyday"], "image_prompt": "", "headline_th": "", "product_hero": ""}, "8": {"pillar": "Engagement", "track": "content", "title": "Smoothie ไม่ใส่น้ำตาล หวานจากผลไม้", "topicAvg": 8.7, "captionAvg": 8.8, "captionMin": 8, "angle": "LINE OA · Broadcast + CTA · สไตล์ Recipe — สูตรปั่น 30 วิ พร้อม CTA สต็อกของ", "caption_th": "Smoothie ไม่ใส่น้ำตาล หวานจากผลไม้ล้วน 🍓\n\nโยเกิร์ต 1 ถ้วย + กล้วยสุก 1 ลูก + เบอร์รี่แช่แข็ง\nปั่นรวม 30 วินาที\n\nหวานพอดีจากผลไม้ ไม่ต้องเติมน้ำตาลเลย\n\nสต็อกโยเกิร์ตไว้ที่บ้านสัปดาห์นี้ 👉 [ลิงก์สั่งซื้อ]\n\n#YogurtCulture", "caption_body": "Smoothie ไม่ใส่น้ำตาล หวานจากผลไม้ล้วน 🍓\n\nโยเกิร์ต 1 ถ้วย + กล้วยสุก 1 ลูก + เบอร์รี่แช่แข็ง\nปั่นรวม 30 วินาที\n\nหวานพอดีจากผลไม้ ไม่ต้องเติมน้ำตาลเลย\n\nสต็อกโยเกิร์ตไว้ที่บ้านสัปดาห์นี้ 👉 [ลิงก์สั่งซื้อ]", "hashtags": ["#YogurtCulture"], "image_prompt": "", "headline_th": "", "product_hero": ""}, "9": {"pillar": "Education", "track": "content", "title": "Greek yogurt ต่างจากธรรมดายังไง", "topicAvg": 9.2, "captionAvg": 9.0, "captionMin": 8, "angle": "IG · Carousel · สไตล์ Education — เทียบ Greek vs โยเกิร์ตธรรมดา ให้เลือกตามวัน", "caption_th": "Greek yogurt ต่างจากโยเกิร์ตธรรมดายังไง?\n\nความต่างหลักคือการ “กรองเวย์” ออก\nGreek yogurt กรองมากกว่า เลยข้นกว่า โปรตีนต่อคำสูงกว่า รสเปรี้ยวเข้มขึ้นนิด\n\nโยเกิร์ตธรรมดาเนื้อเบากว่า ลื่นคอกว่า เหมาะกินเปล่าหรือใส่ผลไม้\n\nไม่มีแบบไหนดีกว่ากัน — อยู่ที่วันนั้นอยากได้เนื้อแบบไหน\n\n#YogurtCulture #greekyogurt #foodscience", "caption_body": "Greek yogurt ต่างจากโยเกิร์ตธรรมดายังไง?\n\nความต่างหลักคือการ “กรองเวย์” ออก\nGreek yogurt กรองมากกว่า เลยข้นกว่า โปรตีนต่อคำสูงกว่า รสเปรี้ยวเข้มขึ้นนิด\n\nโยเกิร์ตธรรมดาเนื้อเบากว่า ลื่นคอกว่า เหมาะกินเปล่าหรือใส่ผลไม้\n\nไม่มีแบบไหนดีกว่ากัน — อยู่ที่วันนั้นอยากได้เนื้อแบบไหน", "hashtags": ["#YogurtCulture", "#greekyogurt", "#foodscience"], "image_prompt": "", "headline_th": "", "product_hero": ""}, "10": {"pillar": "Engagement", "track": "content", "title": "น้ำสลัดโยเกิร์ต ทำเองใน 1 นาที", "topicAvg": 8.9, "captionAvg": 8.9, "captionMin": 8, "angle": "IG · Reels · สไตล์ Recipe — น้ำสลัดครีมมี่แต่เบากว่ามายองเนส", "caption_th": "น้ำสลัดโยเกิร์ต ทำเองใน 1 นาที\n\nโยเกิร์ต 3 ช้อน + น้ำมะนาว + เกลือ + พริกไทย\nคนรวม ราดสลัดมื้อเที่ยง\n\nเปรี้ยวสดชื่น ครีมมี่แต่ไม่หนักเท่ามายองเนส\n\n#YogurtCulture #saladdressing #มื้อเที่ยง #recipe", "caption_body": "น้ำสลัดโยเกิร์ต ทำเองใน 1 นาที\n\nโยเกิร์ต 3 ช้อน + น้ำมะนาว + เกลือ + พริกไทย\nคนรวม ราดสลัดมื้อเที่ยง\n\nเปรี้ยวสดชื่น ครีมมี่แต่ไม่หนักเท่ามายองเนส", "hashtags": ["#YogurtCulture", "#saladdressing", "#มื้อเที่ยง", "#recipe"], "image_prompt": "", "headline_th": "", "product_hero": ""}, "11": {"pillar": "Inspiration", "track": "content", "title": "ของกินติดตู้เย็นที่ไม่ทำให้ผิดหวัง", "topicAvg": 9.0, "captionAvg": 8.8, "captionMin": 8, "angle": "FB · เล่ายาว · สไตล์ Everyday — โยเกิร์ตเป็นของประจำบ้านที่ใช้ได้ทุกมื้อ", "caption_th": "ของกินติดตู้เย็นที่ไม่เคยทำให้ผิดหวัง\n\nทุกบ้านมีของแบบนี้อยู่ — อย่างที่หยิบมากินตอนไหนก็ได้ ไม่ต้องคิดเยอะ\nสำหรับเรา โยเกิร์ตคือหนึ่งในนั้น\n\nเช้าก็กินได้ บ่ายหิวก็กินได้ ดึก ๆ อยากได้อะไรเบา ๆ ก็ยังกินได้\nใส่ผลไม้ก็ได้ กินเปล่าก็ดี ทำเป็นน้ำสลัดก็ยังไหว\n\nของดีที่อยู่กับเราได้ทุกวัน มักเป็นของที่เรียบง่ายแบบนี้แหละ\n\n#YogurtCulture", "caption_body": "ของกินติดตู้เย็นที่ไม่เคยทำให้ผิดหวัง\n\nทุกบ้านมีของแบบนี้อยู่ — อย่างที่หยิบมากินตอนไหนก็ได้ ไม่ต้องคิดเยอะ\nสำหรับเรา โยเกิร์ตคือหนึ่งในนั้น\n\nเช้าก็กินได้ บ่ายหิวก็กินได้ ดึก ๆ อยากได้อะไรเบา ๆ ก็ยังกินได้\nใส่ผลไม้ก็ได้ กินเปล่าก็ดี ทำเป็นน้ำสลัดก็ยังไหว\n\nของดีที่อยู่กับเราได้ทุกวัน มักเป็นของที่เรียบง่ายแบบนี้แหละ", "hashtags": ["#YogurtCulture"], "image_prompt": "", "headline_th": "", "product_hero": ""}, "12": {"pillar": "Inspiration", "track": "content", "title": "เสาร์เช้าช้า ๆ กับโยเกิร์ตหนึ่งถ้วย", "topicAvg": 9.1, "captionAvg": 8.9, "captionMin": 8, "angle": "IG · Feed photo · สไตล์ Inspiration — slow morning วันหยุด เริ่มจากมื้อเช้าเงียบ ๆ", "caption_th": "เสาร์เช้าที่ไม่ต้องตั้งนาฬิกาปลุก\n\nชงกาแฟ ตักโยเกิร์ตใส่ถ้วย นั่งกินช้า ๆ ริมหน้าต่าง\nไม่มีอะไรต้องรีบ\n\nวันหยุดที่ดีบางทีก็เริ่มจากมื้อเช้าเงียบ ๆ แค่นี้เอง\n\n#YogurtCulture #slowmorning #weekend", "caption_body": "เสาร์เช้าที่ไม่ต้องตั้งนาฬิกาปลุก\n\nชงกาแฟ ตักโยเกิร์ตใส่ถ้วย นั่งกินช้า ๆ ริมหน้าต่าง\nไม่มีอะไรต้องรีบ\n\nวันหยุดที่ดีบางทีก็เริ่มจากมื้อเช้าเงียบ ๆ แค่นี้เอง", "hashtags": ["#YogurtCulture", "#slowmorning", "#weekend"], "image_prompt": "", "headline_th": "", "product_hero": ""}, "13": {"pillar": "PR", "track": "content", "title": "ช่วงเข้าพรรษา มื้อเบาไม่มีเนื้อ", "topicAvg": 9.0, "captionAvg": 8.8, "captionMin": 8, "angle": "IG + FB · Feed photo · สไตล์ Seasonal — โยงเทศกาลเข้าพรรษา (29–30 ก.ค.) กับมื้อเบาไม่มีเนื้อ โทนเคารพ ไม่ขายแรง", "caption_th": "ช่วงเข้าพรรษา หลายคนตั้งใจกินเบาขึ้น หรืองดเนื้อสัตว์\n\nมื้อเช้าที่ไม่มีเนื้อก็อิ่มสบายได้\nโยเกิร์ตกับผลไม้และธัญพืช ให้โปรตีนและพลังงานพอเริ่มวัน\n\nช่วงที่ตั้งใจดูแลตัวเองและคนรอบข้าง เริ่มจากมื้อง่าย ๆ ก็ได้\n\n#YogurtCulture #วันเข้าพรรษา #มื้อเบาๆ", "caption_body": "ช่วงเข้าพรรษา หลายคนตั้งใจกินเบาขึ้น หรืองดเนื้อสัตว์\n\nมื้อเช้าที่ไม่มีเนื้อก็อิ่มสบายได้\nโยเกิร์ตกับผลไม้และธัญพืช ให้โปรตีนและพลังงานพอเริ่มวัน\n\nช่วงที่ตั้งใจดูแลตัวเองและคนรอบข้าง เริ่มจากมื้อง่าย ๆ ก็ได้", "hashtags": ["#YogurtCulture", "#วันเข้าพรรษา", "#มื้อเบาๆ"], "image_prompt": "", "headline_th": "", "product_hero": ""}, "14": {"pillar": "Branding", "track": "content", "title": "ปิดเดือนกรกฎา ขอบคุณทุกมื้อ", "topicAvg": 8.5, "captionAvg": 8.6, "captionMin": 8, "angle": "LINE OA · Broadcast + CTA · สไตล์ Branding — ปิดเดือน ขอบคุณลูกค้า + ชวนสต็อกสัปดาห์หน้า", "caption_th": "ปิดเดือนกรกฎาคมแล้ว 🌿\nขอบคุณที่ให้โยเกิร์ตเป็นส่วนหนึ่งของมื้อในแต่ละวัน\n\nเดือนหน้าเรามีอะไรใหม่ ๆ มาฝาก\nระหว่างนี้ สต็อกไว้ให้สัปดาห์หน้าได้เลย 👉 [ลิงก์สั่งซื้อ]\n\n#YogurtCulture", "caption_body": "ปิดเดือนกรกฎาคมแล้ว 🌿\nขอบคุณที่ให้โยเกิร์ตเป็นส่วนหนึ่งของมื้อในแต่ละวัน\n\nเดือนหน้าเรามีอะไรใหม่ ๆ มาฝาก\nระหว่างนี้ สต็อกไว้ให้สัปดาห์หน้าได้เลย 👉 [ลิงก์สั่งซื้อ]", "hashtags": ["#YogurtCulture"], "image_prompt": "", "headline_th": "", "product_hero": ""}}, "schedule": [{"id": 1, "date": "2026-07-01"}, {"id": 2, "date": "2026-07-03"}, {"id": 3, "date": "2026-07-05"}, {"id": 4, "date": "2026-07-07"}, {"id": 5, "date": "2026-07-09"}, {"id": 6, "date": "2026-07-11"}, {"id": 7, "date": "2026-07-14"}, {"id": 8, "date": "2026-07-16"}, {"id": 9, "date": "2026-07-18"}, {"id": 10, "date": "2026-07-21"}, {"id": 11, "date": "2026-07-23"}, {"id": 12, "date": "2026-07-25"}, {"id": 13, "date": "2026-07-29"}, {"id": 14, "date": "2026-07-31"}], "allTopics": [{"id": 5, "pillar": "Education", "track": "content", "title": "ทำไมโยเกิร์ตที่ดี ถึงเปรี้ยว ‘พอดี’", "avg": 9.4, "min": 8, "improved": false}, {"id": 2, "pillar": "Education", "track": "content", "title": "โพรไบโอติกส์ในโยเกิร์ต ทำอะไรจริง ๆ", "avg": 9.3, "min": 8, "improved": false}, {"id": 9, "pillar": "Education", "track": "content", "title": "Greek yogurt ต่างจากธรรมดายังไง", "avg": 9.2, "min": 8, "improved": false}, {"id": 12, "pillar": "Inspiration", "track": "content", "title": "เสาร์เช้าช้า ๆ กับโยเกิร์ตหนึ่งถ้วย", "avg": 9.1, "min": 8, "improved": false}, {"id": 6, "pillar": "Inspiration", "track": "content", "title": "วันฝนตก โยเกิร์ตราดน้ำผึ้ง", "avg": 9.0, "min": 8, "improved": false}, {"id": 11, "pillar": "Inspiration", "track": "content", "title": "ของกินติดตู้เย็นที่ไม่ทำให้ผิดหวัง", "avg": 9.0, "min": 8, "improved": false}, {"id": 13, "pillar": "PR", "track": "content", "title": "ช่วงเข้าพรรษา มื้อเบาไม่มีเนื้อ", "avg": 9.0, "min": 8, "improved": false}, {"id": 10, "pillar": "Engagement", "track": "content", "title": "น้ำสลัดโยเกิร์ต ทำเองใน 1 นาที", "avg": 8.9, "min": 8, "improved": false}, {"id": 1, "pillar": "Inspiration", "track": "content", "title": "เปิดเดือนใหม่ที่มื้อเช้าง่าย ๆ", "avg": 8.8, "min": 8, "improved": false}, {"id": 4, "pillar": "Engagement", "track": "content", "title": "Overnight oats เตรียมคืนนี้ กินพรุ่งนี้", "avg": 8.8, "min": 8, "improved": false}, {"id": 7, "pillar": "Inspiration", "track": "content", "title": "มื้อบ่ายเบา ๆ ก่อนทำงานต่อ", "avg": 8.7, "min": 8, "improved": false}, {"id": 8, "pillar": "Engagement", "track": "content", "title": "Smoothie ไม่ใส่น้ำตาล หวานจากผลไม้", "avg": 8.7, "min": 8, "improved": false}, {"id": 3, "pillar": "Engagement", "track": "content", "title": "Yogurt bowl 3 นาที เช้าวันอาทิตย์", "avg": 8.6, "min": 8, "improved": false}, {"id": 14, "pillar": "Branding", "track": "content", "title": "ปิดเดือนกรกฎา ขอบคุณทุกมื้อ", "avg": 8.5, "min": 8, "improved": false}]};
+
+// ---------- pillar visual mapping (brand palette only) ----------
+const PILLAR = {
+  Branding:    { bg: 'bg-ink',        text: 'text-white', dot: '#0B0B0B', label: 'Branding' },
+  Education:   { bg: 'bg-brandblue',  text: 'text-ink',   dot: '#84D7FF', label: 'Education' },
+  Product:     { bg: 'bg-brandorange',text: 'text-ink',   dot: '#FF8C33', label: 'Product' },
+  Inspiration: { bg: 'bg-brandred',   text: 'text-white', dot: '#F2565C', label: 'Inspiration' },
+  Engagement:  { bg: 'bg-brandblue',  text: 'text-ink',   dot: '#84D7FF', label: 'Engagement' },
+  PR:          { bg: 'bg-brandred',   text: 'text-white', dot: '#F2565C', label: 'PR' },
+};
+const pillarOf = (p) => PILLAR[p] || PILLAR.Branding;
+
+const TH_DOW = ['อา','จ','อ','พ','พฤ','ศ','ส'];
+const TH_MONTH = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const TODAY = '2026-07-01';
+const CAL_YEAR = 2026, CAL_MONTH = 6; // July (0-indexed)
+
+function iso(y, m, d) { return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+
+function copyText(t) {
+  if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t);
+  return new Promise((res) => {
+    const ta = document.createElement('textarea'); ta.value = t; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta); res();
+  });
+}
+
+// ---------- small UI atoms ----------
+function CopyBtn({ text, label, big, tone }) {
+  const [done, setDone] = useState(false);
+  const cls = tone === 'dark'
+    ? 'bg-ink text-white hover:bg-black'
+    : 'bg-white/70 text-ink hover:bg-white border border-ink/15';
+  return (
+    <button
+      onClick={() => { copyText(text).then(() => { setDone(true); setTimeout(()=>setDone(false), 1600); window.__toast && window.__toast(); }); }}
+      className={`inline-flex items-center gap-1.5 rounded-xl font-medium transition-all duration-200 cursor-pointer active:scale-95 ${cls} ${big ? 'px-4 py-2.5 text-sm' : 'px-3 py-1.5 text-xs'}`}
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        {done
+          ? <polyline points="20 6 9 17 4 12" />
+          : <><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></>}
+      </svg>
+      {done ? 'คัดลอกแล้ว' : label}
+    </button>
+  );
+}
+
+function Pill({ p, small }) {
+  const s = pillarOf(p);
+  return <span className={`inline-flex items-center rounded-full font-semibold ${s.bg} ${s.text} ${small ? 'px-2 py-0.5 text-[10px]' : 'px-2.5 py-1 text-xs'}`}>{s.label}</span>;
+}
+
+function ScoreBadge({ avg, min, pass }) {
+  return (
+    <div className="inline-flex items-center gap-1.5">
+      <div className="inline-flex items-baseline gap-0.5 rounded-lg bg-ink text-white px-2 py-0.5">
+        <span className="text-sm font-bold leading-none">{avg}</span>
+        <span className="text-[9px] opacity-70 leading-none">/10</span>
+      </div>
+      {pass
+        ? <span className="text-[10px] font-semibold text-ink/70">พร้อมใช้</span>
+        : <span className="text-[10px] font-medium text-brandred">ต่ำสุด {min}</span>}
+    </div>
+  );
+}
+
+// ---------- header ----------
+function Header() {
+  const s = DATA.summary;
+  const stats = [
+    { n: DATA.allTopics.length, l: 'โพสต์ทั้งเดือน' },
+    { n: 3, l: 'ช่องทาง' },
+    { n: DATA.top5.length, l: 'ไฮไลต์' },
+    { n: 5, l: 'สไตล์' },
+  ];
+  return (
+    <header className="relative z-10 mb-6">
+      <div className="glass rounded-3xl p-5 sm:p-7">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+          <div className="inline-flex items-center gap-3">
+            <div className="bg-ink text-white rounded-2xl px-3.5 py-2 leading-[0.95] shadow-lg">
+              <div className="text-[15px] font-extrabold tracking-tight">YOGURT</div>
+              <div className="text-[15px] font-extrabold tracking-[0.18em]">CULTURE</div>
+            </div>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold text-ink leading-tight">Content Calendar</h1>
+              <p className="text-xs sm:text-sm text-ink/55">ปฏิทินคอนเทนต์เดือนกรกฎาคม 2026 · copy ไปโพสต์ได้เลย</p>
+            </div>
+          </div>
+          <div className="sm:ml-auto grid grid-cols-4 gap-2 sm:gap-3">
+            {stats.map((x,i)=>(
+              <div key={i} className="glass-soft rounded-2xl px-2.5 sm:px-4 py-2 text-center min-w-[62px]">
+                <div className="text-base sm:text-xl font-extrabold text-ink leading-none">{x.n}</div>
+                <div className="text-[9px] sm:text-[11px] text-ink/55 mt-1 leading-tight">{x.l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+// ---------- calendar ----------
+function CalendarView({ onOpen }) {
+  const schedMap = useMemo(() => {
+    const m = {};
+    DATA.schedule.forEach(s => { m[s.date] = DATA.posts[s.id]; });
+    return m;
+  }, []);
+  const weeks = useMemo(() => {
+    const first = new Date(CAL_YEAR, CAL_MONTH, 1).getDay();
+    const days = new Date(CAL_YEAR, CAL_MONTH + 1, 0).getDate();
+    const cells = [];
+    for (let i=0;i<first;i++) cells.push(null);
+    for (let d=1; d<=days; d++) cells.push(d);
+    while (cells.length % 7) cells.push(null);
+    const w = []; for (let i=0;i<cells.length;i+=7) w.push(cells.slice(i,i+7));
+    return w;
+  }, []);
+
+  return (
+    <div className="space-y-5">
+      {/* ready posts rail */}
+      <div className="glass rounded-3xl p-4 sm:p-5">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-bold text-ink">โพสต์พร้อมใช้ · {DATA.top5.length} ชิ้น</h2>
+          <span className="text-[11px] text-ink/50">เรียงตามคะแนนหัวข้อ</span>
+        </div>
+        <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1">
+          {DATA.top5.map((p, i) => {
+            const s = pillarOf(p.pillar);
+            const date = DATA.schedule.find(x=>x.id===p.id);
+            const dd = date ? Number(date.date.slice(8)) : null;
+            return (
+              <button key={p.id} onClick={()=>onOpen(p.id)}
+                className="group text-left shrink-0 w-[230px] glass-soft rounded-2xl p-3.5 hover:-translate-y-1 hover:shadow-xl transition-all duration-200 cursor-pointer">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-1.5">
+                    <Pill p={p.pillar} small />
+                    {p.track==='health' && <span className="text-[9px] font-bold text-ink bg-brandblue rounded-full px-1.5 py-0.5">🩺</span>}
+                  </div>
+                  {dd && <span className="text-[10px] font-semibold text-ink/60">{dd} ก.ค.</span>}
+                </div>
+                <div className="h-1.5 w-9 rounded-full mb-2" style={{background:s.dot}}></div>
+                <p className="text-[13px] font-semibold text-ink leading-snug line-clamp-3 min-h-[54px]">{p.title}</p>
+                <div className="flex items-center justify-between mt-2.5">
+                  <ScoreBadge avg={p.topicAvg} min={p.captionMin} pass={p.captionMin>=8} />
+                  <span className="text-[11px] font-medium text-ink/40 group-hover:text-ink transition-colors">เปิด →</span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* month grid */}
+      <div className="glass rounded-3xl p-4 sm:p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-ink">{TH_MONTH[CAL_MONTH]} {CAL_YEAR + 543}</h2>
+          <div className="flex items-center gap-2.5 flex-wrap justify-end">
+            {['Branding','Education','Product','Inspiration'].map(k=>(
+              <span key={k} className="inline-flex items-center gap-1 text-[10px] text-ink/60">
+                <span className="w-2.5 h-2.5 rounded-full" style={{background:pillarOf(k).dot, border:'1px solid rgba(0,0,0,.15)'}}></span>{k}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="grid grid-cols-7 gap-1 sm:gap-2">
+          {TH_DOW.map((d,i)=>(<div key={i} className="text-center text-[11px] font-semibold text-ink/45 pb-1">{d}</div>))}
+          {weeks.flat().map((d, i) => {
+            if (!d) return <div key={i} className="aspect-square sm:aspect-[4/5]"></div>;
+            const key = iso(CAL_YEAR, CAL_MONTH, d);
+            const post = schedMap[key];
+            const isToday = key === TODAY;
+            const s = post ? pillarOf(post.pillar) : null;
+            return (
+              <div key={i}
+                onClick={post ? ()=>onOpen(post.id) : undefined}
+                className={`relative aspect-square sm:aspect-[4/5] rounded-xl sm:rounded-2xl p-1.5 sm:p-2 border transition-all duration-200 overflow-hidden
+                  ${post ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow-lg glass-soft border-white/70' : 'bg-white/25 border-white/40'}
+                  ${isToday ? 'ring-2 ring-ink' : ''}`}>
+                <div className={`text-[11px] sm:text-xs font-semibold ${isToday ? 'text-ink' : 'text-ink/55'}`}>{d}</div>
+                {isToday && <div className="text-[8px] text-ink/50 -mt-0.5 hidden sm:block">วันนี้</div>}
+                {post && (
+                  <>
+                    <div className="hidden sm:block mt-1">
+                      <div className={`rounded-lg ${s.bg} ${s.text} px-1.5 py-1`}>
+                        <div className="text-[9px] font-bold leading-tight line-clamp-3">{post.title}</div>
+                      </div>
+                    </div>
+                    <div className="sm:hidden absolute bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full" style={{background:s.dot, border:'1px solid rgba(0,0,0,.2)'}}></div>
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        <p className="text-[11px] text-ink/45 mt-3 sm:hidden">แตะวันที่มีจุดสี เพื่อเปิดโพสต์ · หรือเลื่อนการ์ดด้านบน</p>
+      </div>
+    </div>
+  );
+}
+
+// ---------- backlog / pipeline ----------
+function Backlog({ onOpen }) {
+  const [filter, setFilter] = useState('all');
+  const hasHealth = DATA.allTopics.some(t=>t.track==='health');
+  const filters = ['all', ...(hasHealth?['content','health']:[]), ...Array.from(new Set(DATA.allTopics.map(t=>t.pillar)))];
+  const flabel = (f)=> f==='all'?'ทั้งหมด' : f==='health'?'🩺 Health' : f==='content'?'Content' : f;
+  const readyIds = new Set(DATA.top5.map(t=>t.id));
+  const list = DATA.allTopics.filter(t => filter==='all' ? true : filter==='health' ? t.track==='health' : filter==='content' ? t.track!=='health' : t.pillar===filter);
+  return (
+    <div className="glass rounded-3xl p-4 sm:p-6">
+      <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
+        <h2 className="text-lg font-bold text-ink">ไอเดียทั้งเดือน · {DATA.allTopics.length} โพสต์</h2>
+        <span className="text-[11px] text-ink/50">จัดลำดับตามความพร้อม · copy ไปโพสต์ได้เลย</span>
+      </div>
+      <div className="flex gap-1.5 overflow-x-auto no-scrollbar py-3 -mx-1 px-1">
+        {filters.map(p=>(
+          <button key={p} onClick={()=>setFilter(p)}
+            className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 cursor-pointer border
+              ${filter===p ? 'bg-ink text-white border-ink' : 'bg-white/50 text-ink/70 border-ink/10 hover:bg-white'}`}>
+            {flabel(p)}
+          </button>
+        ))}
+      </div>
+      <div className="space-y-2">
+        {list.map((t) => {
+          const rank = DATA.allTopics.indexOf(t) + 1;
+          const ready = readyIds.has(t.id);
+          const s = pillarOf(t.pillar);
+          return (
+            <div key={t.id}
+              onClick={ready ? ()=>onOpen(t.id) : undefined}
+              className={`group glass-soft rounded-2xl p-3 sm:p-3.5 flex items-center gap-3 transition-all duration-200 ${ready ? 'cursor-pointer hover:shadow-lg hover:bg-white/70' : ''}`}>
+              <div className="shrink-0 w-7 text-center">
+                <div className="text-sm font-extrabold text-ink/35">{rank}</div>
+              </div>
+              <div className="shrink-0 w-1 h-10 rounded-full" style={{background:s.dot}}></div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <Pill p={t.pillar} small />
+                  {t.track==='health' && <span className="text-[9px] font-bold text-ink bg-brandblue rounded-full px-1.5 py-0.5">🩺 Health</span>}
+                  {t.track==='health' && t.compliance==='safe' && <span className="text-[9px] font-medium text-ink/50">🟢 โพสต์ได้</span>}
+                  {t.compliance==='caution' && <span className="text-[9px] font-semibold text-ink/70 border border-ink/15 rounded-full px-1.5 py-0.5">🟡 ระวังคำ</span>}
+                  {t.compliance==='verify' && <span className="text-[9px] font-semibold text-brandred border border-brandred/40 rounded-full px-1.5 py-0.5">🔴 verify ตัวเลข</span>}
+                  {t.improved && <span className="text-[9px] font-semibold text-ink/45 border border-ink/15 rounded-full px-1.5 py-0.5">ปรับโดย Lead</span>}
+                  {ready && <span className="text-[9px] font-bold text-white bg-brandorange rounded-full px-1.5 py-0.5">พร้อมโพสต์</span>}
+                </div>
+                <p className="text-[13px] font-medium text-ink leading-snug line-clamp-2">{t.title}</p>
+                {(() => { const note = t.track==='health' ? (t.notes && t.notes[0]) : (t.topSuggestions && t.min<8 && t.topSuggestions[0]); return note ? <p className="text-[10.5px] text-ink/45 mt-1 line-clamp-1">{t.track==='health'?'⚠️ ':'💡 '}{note}</p> : null; })()}
+              </div>
+              <div className="shrink-0 flex flex-col items-end gap-1">
+                <div className="inline-flex items-baseline gap-0.5 rounded-lg bg-ink text-white px-2 py-0.5">
+                  <span className="text-sm font-bold leading-none">{t.avg}</span><span className="text-[8px] opacity-60">/10</span>
+                </div>
+                <span className={`text-[9px] font-medium ${t.min>=8 ? 'text-ink/50' : 'text-brandred'}`}>{t.min>=8 ? 'ผ่าน' : 'min '+t.min}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ---------- post modal ----------
+function PostModal({ id, onClose }) {
+  const p = DATA.posts[id];
+  const ref = useRef(null);
+  useEffect(() => {
+    const onKey = (e)=>{ if(e.key==='Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return ()=>{ document.removeEventListener('keydown', onKey); document.body.style.overflow=''; };
+  }, []);
+  if (!p) return null;
+  const s = pillarOf(p.pillar);
+  const sched = DATA.schedule.find(x=>x.id===id);
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6">
+      <div className="absolute inset-0 bg-ink/40 backdrop-blur-sm" onClick={onClose}></div>
+      <div ref={ref} className="relative animate-pop w-full sm:max-w-2xl max-h-[92vh] sm:max-h-[88vh] overflow-y-auto no-scrollbar glass rounded-t-3xl sm:rounded-3xl">
+        {/* sticky head */}
+        <div className="sticky top-0 z-10 glass border-b border-white/60 px-5 sm:px-7 pt-5 pb-4 rounded-t-3xl">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <Pill p={p.pillar} />
+                {p.track==='health' && <span className="text-[11px] font-bold text-ink bg-brandblue rounded-full px-2 py-0.5">🩺 Health</span>}
+                {sched && <span className="text-[11px] font-semibold text-ink/60">กำหนดโพสต์ {Number(sched.date.slice(8))} {TH_MONTH[CAL_MONTH]}</span>}
+              </div>
+              <h3 className="text-lg sm:text-xl font-bold text-ink leading-tight">{p.title}</h3>
+            </div>
+            <button onClick={onClose} className="shrink-0 w-9 h-9 rounded-full glass-soft flex items-center justify-center hover:bg-white transition-colors cursor-pointer" aria-label="ปิด">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" strokeWidth="2.4" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div className="flex items-center gap-4 mt-3">
+            {p.track==='health' ? (
+              <>
+                <div className="flex items-center gap-1.5"><span className="text-[11px] text-ink/50">health panel</span><span className="text-sm font-bold text-ink">{p.topicAvg}</span><span className="text-[10px] text-ink/40">/10</span></div>
+                <div className="w-px h-4 bg-ink/15"></div>
+                <div className="text-[11px] font-medium text-ink/70">{p.compliance==='safe'?'🟢 โพสต์ได้':p.compliance==='caution'?'🟡 ระวังคำ':'🔴 verify ตัวเลข'}</div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-1.5"><span className="text-[11px] text-ink/50">หัวข้อ</span><span className="text-sm font-bold text-ink">{p.topicAvg}</span><span className="text-[10px] text-ink/40">/10</span></div>
+                <div className="w-px h-4 bg-ink/15"></div>
+                <div className="flex items-center gap-1.5"><span className="text-[11px] text-ink/50">แคปชั่น</span><span className="text-sm font-bold text-ink">{p.captionAvg}</span><span className="text-[10px] text-ink/40">/10</span>
+                  {p.captionMin>=8 ? <span className="text-[10px] text-ink/55 ml-1">· พร้อมใช้</span> : <span className="text-[10px] text-brandred ml-1">· ต่ำสุด {p.captionMin}</span>}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="px-5 sm:px-7 py-5 space-y-5">
+          {p.angle && (
+            <div className="glass-soft rounded-2xl p-3.5">
+              <div className="text-[11px] font-semibold text-ink/45 mb-1">มุม / Angle</div>
+              <p className="text-[13px] text-ink/80 leading-relaxed">{p.angle}</p>
+            </div>
+          )}
+
+          {/* caption */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-sm font-bold text-ink">แคปชั่น (พร้อมโพสต์)</div>
+              <CopyBtn text={p.caption_th} label="คัดลอกแคปชั่น" tone="dark" />
+            </div>
+            <div className="glass-soft rounded-2xl p-4">
+              <p className="cap-pre text-[14px] text-ink leading-relaxed">{p.caption_body}</p>
+              <div className="mt-3 pt-3 border-t border-ink/10 flex flex-wrap gap-1.5">
+                {p.hashtags.map((h,i)=>(<span key={i} className="text-[11px] font-medium text-ink/70 bg-white/60 rounded-full px-2 py-0.5">{h}</span>))}
+              </div>
+              <div className="mt-3"><CopyBtn text={p.hashtags.join(' ')} label="คัดลอกแฮชแท็ก" /></div>
+            </div>
+          </div>
+
+          {/* image prompt */}
+          {p.image_prompt ? (
+          <div>
+            <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
+              <div>
+                <div className="text-sm font-bold text-ink">Image Prompt · 4:5 (1080×1350)</div>
+                <div className="text-[11px] text-ink/45">สีแบรนด์เท่านั้น · มีช่องใส่รูปสินค้าจริงเป็นพระเอก</div>
+              </div>
+              <CopyBtn text={p.image_prompt} label="คัดลอก Prompt" tone="dark" />
+            </div>
+            {p.headline_th && (
+              <div className="glass-soft rounded-xl px-3.5 py-2 mb-2">
+                <span className="text-[11px] text-ink/45">Headline บนภาพ: </span>
+                <span className="text-[13px] font-semibold text-ink">{p.headline_th}</span>
+              </div>
+            )}
+            {p.product_hero && (
+              <div className="rounded-xl px-3.5 py-2.5 mb-2 border border-dashed border-ink/25 bg-white/40">
+                <span className="text-[11px] font-semibold text-brandorange">📸 รูปสินค้าจริงที่ต้องถ่าย: </span>
+                <span className="text-[12.5px] text-ink/75 leading-relaxed">{p.product_hero}</span>
+              </div>
+            )}
+            <details className="group">
+              <summary className="cursor-pointer text-[12px] font-medium text-ink/60 hover:text-ink select-none list-none flex items-center gap-1">
+                <svg className="group-open:rotate-90 transition-transform" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="m9 18 6-6-6-6"/></svg>
+                ดู prompt เต็ม (ภาษาอังกฤษ)
+              </summary>
+              <div className="mt-2 glass-soft rounded-2xl p-3.5">
+                <p className="cap-pre text-[11.5px] text-ink/80 leading-relaxed font-mono">{p.image_prompt}</p>
+              </div>
+            </details>
+          </div>
+          ) : (
+            <div className="glass-soft rounded-2xl p-3.5 text-[12.5px] text-ink/55">ยังไม่มี image prompt สำหรับโพสต์นี้ — บอกได้ถ้าต้องการให้สร้าง prompt 4:5 สีแบรนด์</div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------- toast ----------
+function Toast() {
+  const [show, setShow] = useState(false);
+  useEffect(()=>{ window.__toast = ()=>{ setShow(true); setTimeout(()=>setShow(false), 1500); }; }, []);
+  if (!show) return null;
+  return (
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] bg-ink text-white text-sm font-medium px-5 py-2.5 rounded-full shadow-2xl flex items-center gap-2" style={{animation:'toastin .2s ease-out both'}}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      คัดลอกไปคลิปบอร์ดแล้ว
+    </div>
+  );
+}
+
+// ---------- theme + font-size controls ----------
+function Controls(){
+  const [theme,setTheme]=useState(()=>{ try{return localStorage.getItem('yc-theme')||'system';}catch(e){return 'system';} });
+  const [scale,setScale]=useState(()=>{ try{return parseFloat(localStorage.getItem('yc-scale'))||1.15;}catch(e){return 1.15;} });
+  useEffect(()=>{
+    const apply=()=>{ const dark = theme==='dark' || (theme==='system' && window.matchMedia('(prefers-color-scheme: dark)').matches); document.documentElement.classList.toggle('dark', dark); };
+    apply(); try{localStorage.setItem('yc-theme',theme);}catch(e){}
+    if(theme==='system'){ const mq=window.matchMedia('(prefers-color-scheme: dark)'); mq.addEventListener('change',apply); return ()=>mq.removeEventListener('change',apply); }
+  },[theme]);
+  useEffect(()=>{ document.documentElement.style.zoom=scale; try{localStorage.setItem('yc-scale',String(scale));}catch(e){} },[scale]);
+  const ic = theme==='light'?'☀️':theme==='dark'?'🌙':'💻';
+  const lb = theme==='light'?'สว่าง':theme==='dark'?'มืด':'ตามระบบ';
+  const cycle=()=>setTheme(t=> t==='light'?'dark':t==='dark'?'system':'light');
+  const dec=()=>setScale(s=>Math.max(0.9, Math.round((s-0.1)*10)/10));
+  const inc=()=>setScale(s=>Math.min(1.7, Math.round((s+0.1)*10)/10));
+  const btn="grid place-items-center w-7 h-7 rounded-full hover:bg-white/60 transition-colors cursor-pointer text-ink font-bold leading-none";
+  return (
+    <div className="ml-auto flex items-center gap-1.5">
+      <div className="flex items-center gap-0.5 glass-soft rounded-full p-1" role="group" aria-label="ขนาดตัวอักษร">
+        <button onClick={dec} className={btn} aria-label="ลดขนาดตัวอักษร">A−</button>
+        <button onClick={()=>setScale(1.15)} className="px-1.5 text-[11px] font-semibold text-ink/60 hover:text-ink cursor-pointer tabular-nums" title="รีเซ็ตขนาด" aria-label="รีเซ็ตขนาดตัวอักษร">{Math.round(scale*100)}%</button>
+        <button onClick={inc} className={btn} aria-label="เพิ่มขนาดตัวอักษร">A+</button>
+      </div>
+      <button onClick={cycle} className="inline-flex items-center gap-1.5 glass-soft rounded-full pl-2.5 pr-3 py-1.5 text-[12px] font-semibold text-ink hover:bg-white/60 transition-colors cursor-pointer" aria-label={`ธีมตอนนี้ ${lb} กดเพื่อสลับ สว่าง/มืด/ตามระบบ`}>
+        <span aria-hidden="true">{ic}</span> {lb}
+      </button>
+    </div>
+  );
+}
+
+// ---------- app ----------
+function App() {
+  const [tab, setTab] = useState('calendar');
+  const [open, setOpen] = useState(null);
+  return (
+    <div className="relative min-h-screen">
+      <div className="blob bg-brandred"   style={{width:340,height:340,top:-60,left:-40}}></div>
+      <div className="blob bg-brandblue"  style={{width:420,height:420,top:120,right:-120}}></div>
+      <div className="blob bg-brandorange"style={{width:300,height:300,bottom:-40,left:'30%'}}></div>
+
+      <div className="relative z-10 max-w-5xl mx-auto px-3 sm:px-6 py-5 sm:py-8">
+        <Header />
+
+        <div className="flex items-center gap-2 mb-5">
+          {[['calendar','ปฏิทิน'],['backlog',`Pipeline ${DATA.allTopics.length} หัวข้อ`]].map(([k,l])=>(
+            <button key={k} onClick={()=>setTab(k)}
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer
+                ${tab===k ? 'bg-ink text-white shadow-lg' : 'glass-soft text-ink/65 hover:text-ink'}`}>
+              {l}
+            </button>
+          ))}
+          <Controls />
+        </div>
+
+        {tab==='calendar' ? <CalendarView onOpen={setOpen} /> : <Backlog onOpen={setOpen} />}
+
+        <footer className="text-center text-[11px] text-ink/40 mt-8 pb-4">
+          Yogurt Culture · Citizenship of Yogurt — “ทุกหยดมีความหมาย” · สร้างโดย Agent Lead + 12 personas
+        </footer>
+      </div>
+
+      {open!=null && <PostModal id={open} onClose={()=>setOpen(null)} />}
+      <Toast />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+<script>
+(function boot(){
+  if(!window.Babel || !window.React || !window.ReactDOM){ return setTimeout(boot, 25); }
+  try {
+    var src = document.getElementById('appsrc').textContent;
+    var out = Babel.transform(src, {presets: [['react', {runtime: 'classic'}]]}).code;
+    (0, eval)(out);
+  } catch (e) {
+    console.error(e);
+    document.getElementById('root').innerHTML = '<pre style="padding:24px;color:#F2565C;white-space:pre-wrap">'+ (e && e.message) +'</pre>';
+  }
+})();
+</script>
+</body>
+</html>
