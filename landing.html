@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Yogurt Culture — โยเกิร์ตแท้ ไม่มีทางลัด</title>
+<meta name="description" content="Yogurt Culture — Greek yogurt แท้ ทำจาก milk + live cultures กรองช้า small batch ไม่มีทางลัด" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          white: '#FFFFFF',
+          black: '#010101',
+          red: '#F2565C',
+          blue: '#84D7FF',
+          orange: '#FF8C33',
+        },
+        fontFamily: {
+          kanit: ['Kanit', 'sans-serif'],
+        },
+      }
+    }
+  };
+</script>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Kanit',sans-serif;background:#FFFFFF;color:#010101;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+  /* animations */
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  @keyframes spin-slow{to{transform:rotate(360deg)}}
+  @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @keyframes fadein{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pop{0%{transform:scale(.95);opacity:0}100%{transform:scale(1);opacity:1}}
+  @keyframes wiggle{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+
+  .floaty{animation:floaty 4s ease-in-out infinite}
+  .floaty-slow{animation:floaty 6s ease-in-out infinite}
+  .spin-slow{animation:spin-slow 18s linear infinite}
+  .marquee-track{display:flex;width:max-content;animation:marquee 22s linear infinite}
+  .fadein{animation:fadein .7s ease-out both}
+  .pop{animation:pop .5s ease-out both}
+  .wiggle{animation:wiggle 2s ease-in-out infinite}
+
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+  /* focus */
+  *:focus-visible{outline:3px solid #FF8C33;outline-offset:3px;border-radius:8px}
+
+  /* stroke doodle style */
+  .doodle{filter:drop-shadow(1px 2px 0 rgba(1,1,1,.08))}
+
+  /* nav */
+  .nav-link{position:relative;font-weight:500;font-size:.9rem;letter-spacing:.02em;transition:color .2s}
+  .nav-link::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:2px;background:#F2565C;border-radius:2px;transition:width .25s}
+  .nav-link:hover::after,.nav-link:focus-visible::after{width:100%}
+
+  /* product card */
+  .card{background:#fff;border:2px solid #010101;border-radius:20px;transition:transform .22s,box-shadow .22s}
+  .card:hover{transform:translateY(-6px);box-shadow:6px 8px 0 #010101}
+
+  /* btn */
+  .btn-primary{display:inline-flex;align-items:center;gap:8px;background:#F2565C;color:#fff;font-weight:700;padding:.75rem 1.75rem;border-radius:999px;border:2.5px solid #010101;box-shadow:4px 4px 0 #010101;transition:transform .18s,box-shadow .18s;cursor:pointer;text-decoration:none;font-family:'Kanit',sans-serif}
+  .btn-primary:hover,.btn-primary:focus-visible{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #010101}
+  .btn-outline{display:inline-flex;align-items:center;gap:8px;background:#fff;color:#010101;font-weight:700;padding:.75rem 1.75rem;border-radius:999px;border:2.5px solid #010101;box-shadow:4px 4px 0 #010101;transition:transform .18s,box-shadow .18s;cursor:pointer;text-decoration:none;font-family:'Kanit',sans-serif}
+  .btn-outline:hover,.btn-outline:focus-visible{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #010101;background:#84D7FF}
+
+  /* pill badge */
+  .badge{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.05em;padding:.2rem .75rem;border-radius:999px;border:1.5px solid #010101;text-transform:uppercase}
+
+  /* section label */
+  .section-label{font-size:.75rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;opacity:.5}
+
+  /* squiggle underline */
+  .highlight{position:relative;display:inline-block}
+  .highlight svg{position:absolute;bottom:-6px;left:0;width:100%;height:10px}
+</style>
+</head>
+<body>
+
+<!-- ─────────────────────────── NAV ─────────────────────────── -->
+<nav aria-label="เมนูหลัก" class="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur-md border-b-2 border-black">
+  <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+
+    <!-- Logo wordmark -->
+    <a href="#top" class="flex items-center gap-2 shrink-0" aria-label="Yogurt Culture หน้าแรก">
+      <!-- Doodle drop logo -->
+      <svg width="32" height="36" viewBox="0 0 32 36" fill="none" aria-hidden="true">
+        <path d="M16 2C16 2 4 14 4 22A12 12 0 0 0 28 22C28 14 16 2 16 2Z" fill="#F2565C" stroke="#010101" stroke-width="2" stroke-linejoin="round"/>
+        <circle cx="12" cy="20" r="2" fill="#fff"/>
+        <circle cx="20" cy="20" r="2" fill="#fff"/>
+        <path d="M12 25C13.5 27 18.5 27 20 25" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span class="font-black text-xl leading-none tracking-tight text-black">YOGURT<br/><span class="text-red" style="color:#F2565C">CULTURE</span></span>
+    </a>
+
+    <!-- Links desktop -->
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#products" class="nav-link text-black">เมนู</a>
+      <a href="#story" class="nav-link text-black">เรื่องของเรา</a>
+      <a href="#channels" class="nav-link text-black">ช่องทาง</a>
+    </div>
+
+    <!-- CTA -->
+    <a href="#channels" class="btn-primary text-sm py-2.5 px-5">
+      สั่งเลย
+      <!-- arrow -->
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</nav>
+
+<!-- ─────────────────────────── HERO ─────────────────────────── -->
+<section id="top" class="min-h-screen pt-16 flex flex-col justify-center relative overflow-hidden bg-white">
+
+  <!-- BG color block -->
+  <div class="absolute top-0 right-0 w-1/2 h-full bg-black hidden lg:block" aria-hidden="true"></div>
+
+  <!-- Doodle decorations BG -->
+  <div aria-hidden="true" class="pointer-events-none absolute inset-0 overflow-hidden">
+    <!-- Orange blob top-left -->
+    <svg class="absolute -top-12 -left-12 opacity-20 spin-slow" width="320" height="320" viewBox="0 0 320 320">
+      <ellipse cx="160" cy="160" rx="150" ry="120" fill="#FF8C33"/>
+    </svg>
+    <!-- Blue squiggle right -->
+    <svg class="absolute top-24 right-8 opacity-30 floaty" width="180" height="40" viewBox="0 0 180 40">
+      <path d="M4 20C24 4 36 4 56 20S96 36 116 20 156 4 176 20" stroke="#84D7FF" stroke-width="5" stroke-linecap="round" fill="none"/>
+    </svg>
+    <!-- Small stars -->
+    <svg class="absolute top-32 left-1/4 floaty-slow" width="28" height="28" viewBox="0 0 28 28">
+      <path d="M14 2C14 8.5 15.5 13 26 14C15.5 15 14 19.5 14 26C14 19.5 12.5 15 2 14C12.5 13 14 8.5 14 2Z" fill="#F2565C"/>
+    </svg>
+    <svg class="absolute bottom-24 left-16 floaty" width="20" height="20" viewBox="0 0 20 20">
+      <path d="M10 1C10 6.5 11 9.5 19 10C11 10.5 10 13.5 10 19C10 13.5 9 10.5 1 10C9 9.5 10 6.5 10 1Z" fill="#FF8C33"/>
+    </svg>
+    <!-- CRAVE label -->
+    <div class="absolute top-40 right-16 lg:right-[52%] rotate-6 wiggle">
+      <span class="badge" style="background:#84D7FF;border-color:#010101;font-size:.8rem;padding:.3rem 1rem">CRAVE</span>
+    </div>
+    <!-- TASTY! label -->
+    <div class="absolute bottom-32 right-20 -rotate-3">
+      <span class="badge" style="background:#FF8C33;color:#fff;border-color:#010101">TASTY!</span>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 py-20 lg:py-0 grid lg:grid-cols-2 gap-12 lg:gap-0 items-center relative z-10 w-full">
+
+    <!-- Left copy -->
+    <div class="fadein" style="animation-delay:.1s">
+      <p class="section-label mb-4">Authentic Greek Yogurt · Bangkok</p>
+      <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black leading-none tracking-tight mb-6">
+        โยเกิร์ต<br/>
+        <span class="highlight" style="color:#F2565C">แท้
+          <svg viewBox="0 0 80 10" fill="none" aria-hidden="true"><path d="M2 7C14 1 26 1 38 7S62 13 74 7" stroke="#84D7FF" stroke-width="3.5" stroke-linecap="round"/></svg>
+        </span><br/>
+        ไม่มีทางลัด
+      </h1>
+      <p class="text-lg font-light leading-relaxed text-black/70 mb-8 max-w-md">
+        Milk + live cultures เท่านั้น · slow-strained · small batch<br/>
+        ทำแบบ Mediterranean ดั้งเดิม เพื่อรสชาติที่คุ้มค่าทุกคำ
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a href="#products" class="btn-primary">ดูเมนูทั้งหมด</a>
+        <a href="#story" class="btn-outline">เรื่องของเรา</a>
+      </div>
+
+      <!-- trust pills -->
+      <div class="flex flex-wrap gap-2 mt-8">
+        <span class="badge" style="background:#fff;color:#010101">No Sugar Added</span>
+        <span class="badge" style="background:#fff;color:#010101">No Additives</span>
+        <span class="badge" style="background:#fff;color:#010101">Small Batch</span>
+        <span class="badge" style="background:#F2565C;color:#fff;border-color:#010101">Live Cultures</span>
+      </div>
+    </div>
+
+    <!-- Right illustration -->
+    <div class="flex justify-center lg:justify-end items-center relative fadein" style="animation-delay:.3s">
+      <!-- Big yogurt bowl doodle -->
+      <div class="relative">
+        <svg class="floaty" width="320" height="320" viewBox="0 0 320 320" fill="none" aria-hidden="true">
+          <!-- Bowl base -->
+          <ellipse cx="160" cy="240" rx="120" ry="32" fill="#010101" opacity=".08"/>
+          <!-- Bowl body -->
+          <path d="M60 130 Q60 260 160 270 Q260 260 260 130 Z" fill="#fff" stroke="#010101" stroke-width="3"/>
+          <!-- Yogurt surface -->
+          <ellipse cx="160" cy="130" rx="100" ry="28" fill="#FBF3E9" stroke="#010101" stroke-width="3"/>
+          <!-- Yogurt swirl -->
+          <path d="M120 125 Q140 115 160 125 Q180 135 200 125" stroke="#FF8C33" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <!-- Granola dots -->
+          <circle cx="140" cy="120" r="5" fill="#FF8C33" stroke="#010101" stroke-width="1.5"/>
+          <circle cx="155" cy="115" r="4" fill="#F2565C" stroke="#010101" stroke-width="1.5"/>
+          <circle cx="170" cy="118" r="4.5" fill="#FF8C33" stroke="#010101" stroke-width="1.5"/>
+          <circle cx="183" cy="124" r="3.5" fill="#84D7FF" stroke="#010101" stroke-width="1.5"/>
+          <!-- Blueberry -->
+          <circle cx="130" cy="128" r="6" fill="#5B9BD5" stroke="#010101" stroke-width="1.5"/>
+          <!-- Strawberry leaf shape -->
+          <path d="M185 108 L190 100 L195 108 Q190 115 185 108Z" fill="#F2565C" stroke="#010101" stroke-width="1.5"/>
+          <!-- Drip right -->
+          <path d="M248 160 Q256 170 252 185" stroke="#F2565C" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <circle cx="252" cy="188" r="5" fill="#F2565C" stroke="#010101" stroke-width="1.5"/>
+          <!-- Drip left -->
+          <path d="M72 155 Q64 168 68 182" stroke="#84D7FF" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <circle cx="68" cy="185" r="5" fill="#84D7FF" stroke="#010101" stroke-width="1.5"/>
+          <!-- Spoon -->
+          <path d="M230 90 Q250 80 258 95 Q264 108 248 120 L220 148" stroke="#010101" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <ellipse cx="252" cy="95" rx="12" ry="8" fill="#FBF3E9" stroke="#010101" stroke-width="2" transform="rotate(-30 252 95)"/>
+        </svg>
+
+        <!-- Floating doodle icons around bowl -->
+        <!-- Heart eye face -->
+        <svg class="absolute -top-6 -left-10 floaty-slow doodle" width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
+          <circle cx="28" cy="28" r="24" fill="#84D7FF" stroke="#010101" stroke-width="2.5"/>
+          <path d="M18 24C18 22 19.5 20 22 22C24.5 20 26 22 26 24C26 28 22 30 22 30C22 30 18 28 18 24Z" fill="#F2565C" stroke="#010101" stroke-width="1.5"/>
+          <path d="M30 24C30 22 31.5 20 34 22C36.5 20 38 22 38 24C38 28 34 30 34 30C34 30 30 28 30 24Z" fill="#F2565C" stroke="#010101" stroke-width="1.5"/>
+          <path d="M20 36C22 40 34 40 36 36" stroke="#010101" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </svg>
+
+        <!-- Sparkle star -->
+        <svg class="absolute -top-4 right-0 floaty doodle" width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+          <path d="M18 2C18 10 20 16 34 18C20 20 18 26 18 34C18 26 16 20 2 18C16 16 18 10 18 2Z" fill="#FF8C33" stroke="#010101" stroke-width="1.5"/>
+        </svg>
+
+        <!-- Hand/thumb up -->
+        <svg class="absolute bottom-2 -right-8 floaty-slow doodle" width="52" height="52" viewBox="0 0 52 52" fill="none" aria-hidden="true">
+          <rect x="6" y="26" width="12" height="18" rx="4" fill="#FBF3E9" stroke="#010101" stroke-width="2"/>
+          <path d="M18 32 C18 28 22 22 26 18 C28 16 30 14 30 11 C30 8 28 6 26 6 C24 6 24 8 24 12 L18 12 V22" fill="#FBF3E9" stroke="#010101" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M18 22 H34 C36 22 38 24 38 26 V40 C38 42 36 44 34 44 H18" fill="#FBF3E9" stroke="#010101" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M22 26 H36" stroke="#010101" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M22 31 H36" stroke="#010101" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M22 36 H34" stroke="#010101" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+
+        <!-- MORE! badge -->
+        <div class="absolute -bottom-4 left-0 -rotate-6">
+          <span class="badge" style="background:#F2565C;color:#fff;border-color:#010101;font-size:.75rem">MORE!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Marquee strip -->
+  <div class="relative z-10 border-y-2 border-black bg-black text-white py-3 overflow-hidden mt-16 lg:mt-8" aria-hidden="true">
+    <div class="marquee-track text-sm font-bold tracking-widest uppercase">
+      <span class="px-6">Authentic Greek Yogurt</span><span class="text-red px-2" style="color:#F2565C">★</span>
+      <span class="px-6">Milk + Live Cultures</span><span class="text-blue px-2" style="color:#84D7FF">★</span>
+      <span class="px-6">Slow-Strained</span><span class="text-orange px-2" style="color:#FF8C33">★</span>
+      <span class="px-6">Small Batch</span><span class="text-red px-2" style="color:#F2565C">★</span>
+      <span class="px-6">No Shortcuts</span><span class="text-blue px-2" style="color:#84D7FF">★</span>
+      <span class="px-6">Mediterranean Way</span><span class="text-orange px-2" style="color:#FF8C33">★</span>
+      <!-- duplicate for seamless loop -->
+      <span class="px-6">Authentic Greek Yogurt</span><span class="text-red px-2" style="color:#F2565C">★</span>
+      <span class="px-6">Milk + Live Cultures</span><span class="text-blue px-2" style="color:#84D7FF">★</span>
+      <span class="px-6">Slow-Strained</span><span class="text-orange px-2" style="color:#FF8C33">★</span>
+      <span class="px-6">Small Batch</span><span class="text-red px-2" style="color:#F2565C">★</span>
+      <span class="px-6">No Shortcuts</span><span class="text-blue px-2" style="color:#84D7FF">★</span>
+      <span class="px-6">Mediterranean Way</span><span class="text-orange px-2" style="color:#FF8C33">★</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────── PRODUCTS ─────────────────────────── -->
+<section id="products" class="py-24 bg-white relative overflow-hidden">
+
+  <!-- BG doodle -->
+  <div aria-hidden="true" class="pointer-events-none absolute inset-0">
+    <svg class="absolute right-0 top-12 opacity-10" width="260" height="260" viewBox="0 0 260 260">
+      <circle cx="130" cy="130" r="120" fill="#84D7FF"/>
+    </svg>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 relative z-10">
+    <div class="text-center mb-14">
+      <p class="section-label mb-3">เมนูของเรา</p>
+      <h2 class="text-4xl sm:text-5xl font-black leading-tight">ทำจากของจริง<br/><span style="color:#F2565C">ทุกอย่าง</span></h2>
+    </div>
+
+    <!-- Product grid -->
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- 1. Plain Greek Yogurt STAR -->
+      <article class="card p-6 relative lg:col-span-1">
+        <div class="absolute -top-3 -right-3">
+          <span class="badge" style="background:#F2565C;color:#fff;border-color:#010101">ตัวเด่น</span>
+        </div>
+        <!-- Doodle bowl -->
+        <div class="flex justify-center mb-5">
+          <svg width="100" height="100" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <ellipse cx="50" cy="72" rx="38" ry="10" fill="#010101" opacity=".07"/>
+            <path d="M16 42Q16 78 50 80Q84 78 84 42Z" fill="#FBF3E9" stroke="#010101" stroke-width="2.5"/>
+            <ellipse cx="50" cy="42" rx="34" ry="9" fill="#fff" stroke="#010101" stroke-width="2.5"/>
+            <path d="M36 39Q43 35 50 39Q57 43 64 39" stroke="#FF8C33" stroke-width="2" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-black mb-1">Plain Greek Yogurt</h3>
+        <p class="text-sm text-black/60 font-light leading-relaxed">เนื้อแน่น ครีมมี่ เข้มข้น · ทำจาก milk + live cultures · ไม่มีน้ำตาลเพิ่ม ไม่มีสารปรุงแต่ง · เหมาะกินเปล่า ทาขนมปัง ทำ dip หรือ salad dressing</p>
+        <div class="flex flex-wrap gap-1.5 mt-4">
+          <span class="badge text-xs" style="background:#fff">No Sugar</span>
+          <span class="badge text-xs" style="background:#fff">No Additives</span>
+          <span class="badge text-xs" style="background:#fff">Small Batch</span>
+        </div>
+      </article>
+
+      <!-- 2. Yogurt Bowl -->
+      <article class="card p-6 relative">
+        <div class="flex justify-center mb-5">
+          <svg width="100" height="100" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <ellipse cx="50" cy="72" rx="38" ry="10" fill="#010101" opacity=".07"/>
+            <path d="M16 42Q16 78 50 80Q84 78 84 42Z" fill="#FBF3E9" stroke="#010101" stroke-width="2.5"/>
+            <ellipse cx="50" cy="42" rx="34" ry="9" fill="#fff" stroke="#010101" stroke-width="2.5"/>
+            <!-- toppings -->
+            <circle cx="42" cy="39" r="4" fill="#5B9BD5" stroke="#010101" stroke-width="1.5"/>
+            <circle cx="55" cy="37" r="3.5" fill="#F2565C" stroke="#010101" stroke-width="1.5"/>
+            <circle cx="65" cy="40" r="3" fill="#FF8C33" stroke="#010101" stroke-width="1.5"/>
+            <circle cx="35" cy="41" r="3" fill="#FF8C33" stroke="#010101" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-black mb-1">Yogurt Bowl</h3>
+        <p class="text-sm text-black/60 font-light leading-relaxed">Greek Yogurt + ท็อปปิ้งหน้าต่าง ๆ ปรับแต่งได้ตามชอบ</p>
+      </article>
+
+      <!-- 3. Yogurt Shake -->
+      <article class="card p-6 relative">
+        <div class="flex justify-center mb-5">
+          <svg width="100" height="100" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <!-- cup -->
+            <path d="M35 22 L28 82 Q28 86 50 86 Q72 86 72 82 L65 22Z" fill="#FBF3E9" stroke="#010101" stroke-width="2.5"/>
+            <ellipse cx="50" cy="22" rx="15" ry="5" fill="#fff" stroke="#010101" stroke-width="2"/>
+            <!-- straw -->
+            <rect x="56" y="8" width="5" height="36" rx="2.5" fill="#F2565C" stroke="#010101" stroke-width="1.5"/>
+            <!-- yogurt texture -->
+            <path d="M36 50Q43 46 50 50Q57 54 64 50" stroke="#84D7FF" stroke-width="2" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-black mb-1">Yogurt Shake</h3>
+        <p class="text-sm text-black/60 font-light leading-relaxed">ปั่นจากโยเกิร์ตจริง · no ice · no water · no powder · texture soft & fluffy</p>
+      </article>
+
+      <!-- 4. Yogurt Drink -->
+      <article class="card p-6 relative">
+        <div class="flex justify-center mb-5">
+          <svg width="100" height="100" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <!-- bottle -->
+            <rect x="34" y="24" width="32" height="54" rx="10" fill="#84D7FF" stroke="#010101" stroke-width="2.5"/>
+            <rect x="38" y="14" width="24" height="14" rx="6" fill="#fff" stroke="#010101" stroke-width="2"/>
+            <!-- label -->
+            <rect x="38" y="38" width="24" height="28" rx="4" fill="#fff" opacity=".6"/>
+            <text x="50" y="56" text-anchor="middle" font-family="Kanit" font-size="7" font-weight="700" fill="#010101">YOGURT</text>
+            <text x="50" y="64" text-anchor="middle" font-family="Kanit" font-size="6" fill="#010101">DRINK</text>
+          </svg>
+        </div>
+        <h3 class="text-xl font-black mb-1">Yogurt Drink</h3>
+        <p class="text-sm text-black/60 font-light leading-relaxed">เปิดฝาดื่มได้เลย · รส Unsweetened · Lychee · Blueberry Lemon · Strawberry · Yuzu</p>
+      </article>
+
+      <!-- 5. Soft Serve -->
+      <article class="card p-6 relative">
+        <div class="flex justify-center mb-5">
+          <svg width="100" height="100" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <!-- cone -->
+            <path d="M38 58 L50 88 L62 58Z" fill="#FF8C33" stroke="#010101" stroke-width="2.5"/>
+            <!-- ice cream swirl -->
+            <path d="M36 58 Q32 44 40 38 Q50 30 60 38 Q68 44 64 58Z" fill="#FBF3E9" stroke="#010101" stroke-width="2.5"/>
+            <path d="M40 46 Q44 36 50 34 Q56 36 60 46" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".6"/>
+            <!-- swirl top -->
+            <path d="M44 38 Q50 28 56 38" stroke="#F2565C" stroke-width="2" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-black mb-1">Soft Serve</h3>
+        <p class="text-sm text-black/60 font-light leading-relaxed">ผสม Greek yogurt จริง · smooth · taste of real yogurt</p>
+      </article>
+
+      <!-- 6. Acai Bowl -->
+      <article class="card p-6 relative">
+        <div class="flex justify-center mb-5">
+          <svg width="100" height="100" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <ellipse cx="50" cy="72" rx="38" ry="10" fill="#010101" opacity=".07"/>
+            <path d="M16 42Q16 78 50 80Q84 78 84 42Z" fill="#5B3A8C" stroke="#010101" stroke-width="2.5" opacity=".85"/>
+            <ellipse cx="50" cy="42" rx="34" ry="9" fill="#7B52B4" stroke="#010101" stroke-width="2.5"/>
+            <!-- banana slice -->
+            <ellipse cx="37" cy="40" rx="5" ry="3.5" fill="#FFE066" stroke="#010101" stroke-width="1.5" transform="rotate(-15 37 40)"/>
+            <!-- berry -->
+            <circle cx="55" cy="38" r="4" fill="#F2565C" stroke="#010101" stroke-width="1.5"/>
+            <!-- granola -->
+            <rect x="60" y="36" width="7" height="5" rx="2" fill="#FF8C33" stroke="#010101" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-black mb-1">Acai Bowl</h3>
+        <p class="text-sm text-black/60 font-light leading-relaxed">Acai ปั่นผสมผลไม้ · ไม่ใส่น้ำ ไม่ใส่น้ำแข็ง ไม่มีน้ำตาล · กินกับ topping หรือโยเกิร์ต</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────── STORY ─────────────────────────── -->
+<section id="story" class="py-24 bg-black text-white relative overflow-hidden">
+
+  <!-- Doodle BG -->
+  <div aria-hidden="true" class="pointer-events-none absolute inset-0">
+    <svg class="absolute left-0 bottom-0 opacity-10 floaty-slow" width="300" height="300" viewBox="0 0 300 300">
+      <circle cx="150" cy="150" r="140" fill="#F2565C"/>
+    </svg>
+    <svg class="absolute right-8 top-12 opacity-15" width="180" height="180" viewBox="0 0 180 180">
+      <ellipse cx="90" cy="90" rx="80" ry="60" fill="#84D7FF"/>
+    </svg>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 relative z-10">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+      <!-- Left: big doodle composition -->
+      <div class="flex justify-center">
+        <div class="relative w-72 h-72">
+          <!-- Big circle outline -->
+          <svg class="absolute inset-0" width="288" height="288" viewBox="0 0 288 288" fill="none" aria-hidden="true">
+            <circle cx="144" cy="144" r="136" stroke="#F2565C" stroke-width="3" stroke-dasharray="12 8"/>
+          </svg>
+          <!-- Center milk jar doodle -->
+          <svg class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 floaty" width="160" height="190" viewBox="0 0 160 190" fill="none" aria-hidden="true">
+            <!-- Jar body -->
+            <rect x="20" y="50" width="120" height="120" rx="24" fill="#fff" stroke="#fff" stroke-width="0"/>
+            <rect x="20" y="50" width="120" height="120" rx="24" fill="none" stroke="#F2565C" stroke-width="3"/>
+            <!-- Lid -->
+            <rect x="30" y="28" width="100" height="28" rx="10" fill="#FF8C33" stroke="#F2565C" stroke-width="2.5"/>
+            <!-- Yogurt fill -->
+            <rect x="24" y="90" width="112" height="76" rx="0 0 20 20" fill="#FBF3E9" opacity=".4"/>
+            <!-- Wavy yogurt line -->
+            <path d="M24 90 Q44 82 64 90 Q84 98 104 90 Q124 82 136 90" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- Label text -->
+            <text x="80" y="136" text-anchor="middle" font-family="Kanit" font-size="11" font-weight="800" fill="#fff">YOGURT</text>
+            <text x="80" y="152" text-anchor="middle" font-family="Kanit" font-size="9" fill="#FF8C33">CULTURE</text>
+            <!-- Drops -->
+            <path d="M34 170 Q34 180 40 182 Q46 180 46 170" fill="#84D7FF" stroke="#F2565C" stroke-width="1.5"/>
+          </svg>
+          <!-- Small decorations -->
+          <svg class="absolute top-4 right-4 floaty" width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+            <path d="M20 2C20 12 22 18 38 20C22 22 20 28 20 38C20 28 18 22 2 20C18 18 20 12 20 2Z" fill="#FF8C33"/>
+          </svg>
+          <svg class="absolute bottom-6 left-6 floaty-slow" width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <circle cx="16" cy="16" r="14" fill="none" stroke="#84D7FF" stroke-width="2.5"/>
+            <path d="M10 16C12 20 20 20 22 16" stroke="#84D7FF" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="2" fill="#84D7FF"/>
+            <circle cx="20" cy="12" r="2" fill="#84D7FF"/>
+          </svg>
+          <!-- EVERY DROP COUNTS tag -->
+          <div class="absolute bottom-0 right-0 rotate-6">
+            <span class="badge text-xs" style="background:#FF8C33;color:#fff;border-color:#fff">EVERY DROP COUNTS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: copy -->
+      <div>
+        <p class="section-label mb-4" style="color:rgba(255,255,255,.5)">เรื่องของเรา</p>
+        <h2 class="text-4xl sm:text-5xl font-black leading-tight mb-6">
+          ทำด้วยวิธี<br/>
+          <span style="color:#84D7FF">Mediterranean</span><br/>
+          ดั้งเดิม
+        </h2>
+        <p class="text-lg font-light leading-relaxed mb-6" style="color:rgba(255,255,255,.75)">
+          เราไม่ใช้ shortcut ในการผลิต — ใช้ milk + live cultures กรองช้าทีละ batch เล็ก ๆ เพื่อให้ได้รสชาติ เนื้อสัมผัส และคุณค่าที่แท้จริงของโยเกิร์ต
+        </p>
+        <p class="font-light leading-relaxed mb-8" style="color:rgba(255,255,255,.6)">
+          ไม่มีน้ำตาลเพิ่ม · ไม่มีสารกันเสีย · ไม่ใส่สารให้ความข้น · ไม่ต่อเชื้อจากโยเกิร์ต — เพราะเราเชื่อว่าของดีต้องทำจากของจริง
+        </p>
+
+        <!-- Stats row -->
+        <div class="grid grid-cols-3 gap-6 pt-8 border-t border-white/20">
+          <div>
+            <p class="text-3xl font-black" style="color:#F2565C">2</p>
+            <p class="text-sm font-light mt-1" style="color:rgba(255,255,255,.6)">Ingredients<br/>เท่านั้น</p>
+          </div>
+          <div>
+            <p class="text-3xl font-black" style="color:#84D7FF">Slow</p>
+            <p class="text-sm font-light mt-1" style="color:rgba(255,255,255,.6)">Strained<br/>กรองช้า ๆ</p>
+          </div>
+          <div>
+            <p class="text-3xl font-black" style="color:#FF8C33">Small</p>
+            <p class="text-sm font-light mt-1" style="color:rgba(255,255,255,.6)">Batch<br/>ทีละน้อย</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────── HOW TO EAT ─────────────────────────── -->
+<section class="py-24 bg-white relative overflow-hidden">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-14">
+      <p class="section-label mb-3">กินได้หลายแบบ</p>
+      <h2 class="text-4xl sm:text-5xl font-black">ทำได้<span style="color:#FF8C33"> ทุกอย่าง</span></h2>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- card 1 -->
+      <div class="border-2 border-black rounded-2xl p-6 hover:bg-black hover:text-white transition-colors group">
+        <div class="text-3xl mb-3 font-black group-hover:text-white" style="color:#F2565C">01</div>
+        <h3 class="font-bold text-base mb-1.5">กินเปล่า</h3>
+        <p class="text-sm font-light leading-relaxed opacity-70">ครีมมี่ เข้มข้น รสชาติโยเกิร์ตแท้ ๆ ไม่ต้องปรุงเพิ่ม</p>
+      </div>
+      <!-- card 2 -->
+      <div class="border-2 border-black rounded-2xl p-6 hover:bg-black hover:text-white transition-colors group">
+        <div class="text-3xl mb-3 font-black" style="color:#84D7FF">02</div>
+        <h3 class="font-bold text-base mb-1.5">ทาขนมปัง / Spread</h3>
+        <p class="text-sm font-light leading-relaxed opacity-70">แทนครีมชีสหรือมายองเนส ใส่ผลไม้ใส่น้ำผึ้งได้เลย</p>
+      </div>
+      <!-- card 3 -->
+      <div class="border-2 border-black rounded-2xl p-6 hover:bg-black hover:text-white transition-colors group">
+        <div class="text-3xl mb-3 font-black" style="color:#FF8C33">03</div>
+        <h3 class="font-bold text-base mb-1.5">Smoothie / Shake</h3>
+        <p class="text-sm font-light leading-relaxed opacity-70">ปั่นกับผลไม้แช่แข็ง ไม่ต้องใส่น้ำ ไม่ต้องใส่น้ำแข็ง</p>
+      </div>
+      <!-- card 4 -->
+      <div class="border-2 border-black rounded-2xl p-6 hover:bg-black hover:text-white transition-colors group">
+        <div class="text-3xl mb-3 font-black" style="color:#F2565C">04</div>
+        <h3 class="font-bold text-base mb-1.5">Dip / Dressing</h3>
+        <p class="text-sm font-light leading-relaxed opacity-70">เข้ากับสลัด ผักดิบ หรือใช้ทำ salad dressing แทน mayo</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────── CHANNELS / CTA ─────────────────────────── -->
+<section id="channels" class="py-24 relative overflow-hidden" style="background:#FBF3E9">
+
+  <!-- BG doodles -->
+  <div aria-hidden="true" class="pointer-events-none absolute inset-0">
+    <svg class="absolute right-0 bottom-0 opacity-15 floaty" width="360" height="280" viewBox="0 0 360 280">
+      <ellipse cx="200" cy="160" rx="180" ry="140" fill="#FF8C33"/>
+    </svg>
+    <!-- Squiggle -->
+    <svg class="absolute left-12 top-12 opacity-20" width="160" height="30" viewBox="0 0 160 30">
+      <path d="M4 18C20 4 32 4 48 18S80 32 96 18 128 4 156 18" stroke="#F2565C" stroke-width="4" stroke-linecap="round" fill="none"/>
+    </svg>
+  </div>
+
+  <div class="max-w-3xl mx-auto px-6 text-center relative z-10">
+    <!-- Doodle face above text -->
+    <div class="flex justify-center mb-8">
+      <svg class="floaty" width="80" height="80" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+        <circle cx="40" cy="40" r="36" fill="#F2565C" stroke="#010101" stroke-width="2.5"/>
+        <!-- eyes -->
+        <circle cx="28" cy="34" r="5" fill="#fff" stroke="#010101" stroke-width="2"/>
+        <circle cx="52" cy="34" r="5" fill="#fff" stroke="#010101" stroke-width="2"/>
+        <circle cx="30" cy="34" r="2.5" fill="#010101"/>
+        <circle cx="54" cy="34" r="2.5" fill="#010101"/>
+        <!-- happy mouth -->
+        <path d="M27 50C30 56 50 56 53 50" stroke="#010101" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <!-- tongue -->
+        <path d="M34 54 Q40 62 46 54" fill="#fff" stroke="#010101" stroke-width="1.5"/>
+      </svg>
+    </div>
+
+    <p class="section-label mb-4">สั่งได้เลย</p>
+    <h2 class="text-4xl sm:text-5xl font-black leading-tight mb-4">
+      พร้อมเสิร์ฟแล้ว<br/>
+      <span style="color:#F2565C">ทุกสาขา</span>
+    </h2>
+    <p class="text-lg font-light leading-relaxed mb-10" style="color:rgba(1,1,1,.6)">
+      ทั้งหน้าร้านและ delivery — เลือกช่องทางที่สะดวก
+    </p>
+
+    <!-- Channel cards -->
+    <div class="grid sm:grid-cols-3 gap-4 mb-12">
+      <div class="bg-white border-2 border-black rounded-2xl p-6 text-center">
+        <!-- LINE icon doodle -->
+        <div class="flex justify-center mb-3">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <rect x="4" y="4" width="40" height="40" rx="12" fill="#06C755" stroke="#010101" stroke-width="2"/>
+            <path d="M24 12C16 12 10 17 10 23C10 28 14 32.5 20 34L19 38L24 35C38 35 38 29 38 23C38 17 32 12 24 12Z" fill="#fff" stroke="#06C755" stroke-width="0"/>
+            <text x="24" y="27" text-anchor="middle" font-family="Kanit" font-size="8" font-weight="700" fill="#06C755">LINE</text>
+          </svg>
+        </div>
+        <p class="font-bold text-sm">LINE OA</p>
+        <p class="text-xs mt-1" style="color:rgba(1,1,1,.5)">@yogurtculture</p>
+      </div>
+      <div class="bg-white border-2 border-black rounded-2xl p-6 text-center">
+        <div class="flex justify-center mb-3">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <rect x="4" y="4" width="40" height="40" rx="12" fill="#FF8C33" stroke="#010101" stroke-width="2"/>
+            <text x="24" y="30" text-anchor="middle" font-family="Kanit" font-size="9" font-weight="800" fill="#fff">LINE<br/>MAN</text>
+            <text x="24" y="30" text-anchor="middle" font-family="Kanit" font-size="10" font-weight="800" fill="#fff">LM</text>
+          </svg>
+        </div>
+        <p class="font-bold text-sm">LINE MAN</p>
+        <p class="text-xs mt-1" style="color:rgba(1,1,1,.5)">Delivery</p>
+      </div>
+      <div class="bg-white border-2 border-black rounded-2xl p-6 text-center">
+        <div class="flex justify-center mb-3">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <rect x="4" y="4" width="40" height="40" rx="12" fill="#00B14F" stroke="#010101" stroke-width="2"/>
+            <text x="24" y="30" text-anchor="middle" font-family="Kanit" font-size="12" font-weight="800" fill="#fff">G</text>
+          </svg>
+        </div>
+        <p class="font-bold text-sm">Grab</p>
+        <p class="text-xs mt-1" style="color:rgba(1,1,1,.5)">Delivery</p>
+      </div>
+    </div>
+
+    <!-- Social + IG CTA -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <a href="https://instagram.com/yogurtculture.bkk" target="_blank" rel="noopener noreferrer" class="btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4" stroke="#fff" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.5" fill="#fff"/></svg>
+        IG @yogurtculture.bkk
+      </a>
+      <a href="https://facebook.com/yogurtculture.bkk" target="_blank" rel="noopener noreferrer" class="btn-outline">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6" stroke="#010101" stroke-width="2"/><path d="M14 8h-2a1 1 0 0 0-1 1v2H9v3h2v6h3v-6h2l.5-3H14V9" stroke="#010101" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Facebook
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────── FOOTER ─────────────────────────── -->
+<footer class="bg-black text-white py-12 border-t-2 border-white/10">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+      <!-- logo -->
+      <div class="flex items-center gap-3">
+        <svg width="28" height="32" viewBox="0 0 32 36" fill="none" aria-hidden="true">
+          <path d="M16 2C16 2 4 14 4 22A12 12 0 0 0 28 22C28 14 16 2 16 2Z" fill="#F2565C" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="12" cy="20" r="1.5" fill="#fff"/>
+          <circle cx="20" cy="20" r="1.5" fill="#fff"/>
+        </svg>
+        <span class="font-black text-lg">YOGURT CULTURE</span>
+      </div>
+
+      <!-- middle -->
+      <p class="text-sm font-light text-center" style="color:rgba(255,255,255,.5)">
+        Authentic Greek Yogurt · Milk + Live Cultures · No Shortcut
+      </p>
+
+      <!-- social -->
+      <div class="flex gap-4">
+        <a href="https://instagram.com/yogurtculture.bkk" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="w-9 h-9 border border-white/30 rounded-full flex items-center justify-center hover:border-white transition-colors">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="6" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4" stroke="#fff" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.5" fill="#fff"/></svg>
+        </a>
+        <a href="https://facebook.com/yogurtculture.bkk" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="w-9 h-9 border border-white/30 rounded-full flex items-center justify-center hover:border-white transition-colors">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M14 8h-2a1 1 0 0 0-1 1v2H9v3h2v6h3v-6h2l.5-3H14V9" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="border-t border-white/10 mt-8 pt-6 text-center text-xs" style="color:rgba(255,255,255,.3)">
+      © 2026 Yogurt Culture · Bangkok
+    </div>
+  </div>
+</footer>
+
+<!-- Scroll reveal observer -->
+<script>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.card, section > div > div > [class*="border"]').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity .55s ease-out, transform .55s ease-out';
+    io.observe(el);
+  });
+</script>
+</body>
+</html>
